@@ -46,6 +46,14 @@ void calentador_on_off(int PWM){
       t_horno += (dt_encendido/(60000/delay_en_ms)) * PWM / 100;
     }  
 }
+void perdidas_horno(){
+  if(t_horno > t_ambiente){
+    t_horno -= dt_apagado/(60000/delay_en_ms);
+  }
+  else{
+    t_horno = t_ambiente;
+  }
+}
 
 void setup()
 {
@@ -61,18 +69,14 @@ void setup()
 
 void loop()
 {
-  if(t_horno > t_ambiente){
-    t_horno -= dt_apagado/(60000/delay_en_ms);
-  }
-  else{
-    t_horno = t_ambiente;
-  }
+  perdidas_horno();
+
   lcd_1.setCursor(6, 0);
   lcd_1.print(t_horno);
-  lcd_1.setCursor(6, 1);
-
+  
   float pwm = salida_proporcional_porcentaje(t_deseada,porc_banda,t_horno);
   
+  lcd_1.setCursor(6, 1);
   lcd_1.print(pwm);
   
   calentador_on_off(pwm);
