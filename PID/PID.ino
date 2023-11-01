@@ -5,7 +5,7 @@ const float t_ambiente {28};
 float t_horno {175};
 const float t_max {300};
 float t_deseada {200};
-float porc_banda {10};
+float porcentaje_banda {10};
 
 bool horno {true};
 bool calentador {false};
