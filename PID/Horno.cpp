@@ -13,7 +13,7 @@ Horno::Horno(float t_m,float t_d,float t_i,float t_a, Control tipo, int pin)
 
 float Horno::salida_proporcional_porcentaje()
 {
-  float x = (t_deseada - t_horno)*100.0 / (t_deseada * porcentaje_banda / 100);
+  float x = (t_deseada - t_horno) *100 / (t_deseada * porcentaje_banda /100);
     
   if(x > 100){
     return 100;
@@ -26,13 +26,12 @@ float Horno::salida_proporcional_porcentaje()
 
 float Horno::proporcional_derivativa_porcentaje()
 {
-  float Kp,E,Kd,x;
+  float E,Kd,x;
 
-  Kp = 100.0 / (porcentaje_banda * t_deseada / 100.0);
   Kd = (100.0 * constante_derivariva) / (porcentaje_banda * t_deseada / 100.0);
   E = t_deseada - t_horno;
   
-  x = (Kp * E) + ( Kd * (e_anterior / (delay_en_ms / 1000) ) );
+  x = salida_proporcional_porcentaje() + ( Kd * ( (e_anterior - E) / (delay_en_ms / 1000.0) ) );
   e_anterior = E;
 
   if(x > 100){
@@ -48,7 +47,7 @@ void Horno::perdidas_horno(){
   if(t_horno > t_ambiente){
     t_horno -= dt_perdidas/(60000/delay_en_ms);
   }
-  else{
+  else if(t_horno < t_ambiente){
     t_horno = t_ambiente;
   }
 }
