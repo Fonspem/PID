@@ -11,7 +11,7 @@ int pin_calentador = 2;
 
 
 
-Horno pava(100,80,70,28,Horno::Control::PD,pin_calentador);
+Horno pava(100,80,82,28,Horno::Control::PD,pin_calentador);
 
 void setup()
 {

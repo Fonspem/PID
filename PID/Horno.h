@@ -21,7 +21,7 @@ class Horno
     float dt_perdidas {3.0};// °C por minuto
     
     float porcentaje_banda {10};//P [%]
-    float constante_derivariva {5};//D [s]
+    float constante_derivariva {10};//D [s]
     
     float e_anterior{0};
     
