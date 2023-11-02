@@ -1,10 +1,10 @@
 #include "Arduino.h" 
 #include "Horno.h"
 
-Horno::Horno(float t_m,float t_d,float t_a, Control tipo, int pin)
+Horno::Horno(float t_m,float t_d,float t_i,float t_a, Control tipo, int pin)
 {
   t_ambiente = t_a;
-  t_horno = t_a;
+  t_horno = t_i;
   t_max = t_m;
   t_deseada = t_d;
   controlador = tipo;
@@ -28,11 +28,11 @@ float Horno::proporcional_derivativa_porcentaje()
 {
   float Kp,E,Kd,x;
 
-  Kp = 100.0 / (porcentaje_banda * t_deseada/100.0);
+  Kp = 100.0 / (porcentaje_banda * t_deseada / 100.0);
   Kd = (100.0 * constante_derivariva) / (porcentaje_banda * t_deseada / 100.0);
   E = t_deseada - t_horno;
   
-  x = (Kp * E) + ( Kd * (e_anterior/delay_en_ms) );
+  x = (Kp * E) + ( Kd * (e_anterior / (delay_en_ms / 1000) ) );
   e_anterior = E;
 
   if(x > 100){

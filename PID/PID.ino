@@ -11,7 +11,7 @@ int pin_calentador = 2;
 
 
 
-Horno pava(100,80,28,Horno::Control::PD,pin_calentador);
+Horno pava(100,80,90,28,Horno::Control::PD,pin_calentador);
 
 void setup()
 {
@@ -33,7 +33,7 @@ void loop()
   lcd_1.print(pava.t_horno);
   
   lcd_1.setCursor(6, 1);
-  lcd_1.print(pava.calentador_P());
+  lcd_1.print(pava.calentador_PD());
 
   delay(pava.delay_en_ms);
   

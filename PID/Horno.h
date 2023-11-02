@@ -20,12 +20,13 @@ class Horno
     float dt_calentar {200.0};// °C por minuto
     float dt_perdidas {30.0};// °C por minuto
     
-    float porcentaje_banda {20};//P [%]
-    float constante_derivariva {2};//D [s]
+    float porcentaje_banda {10};//P [%]
+    float constante_derivariva {5};//D [s]
     
     float e_anterior{0};
     
-    int delay_en_ms {500};
+    int delay_en_ms {100};
+    
     enum Control 
     {
       On_Off=1,
@@ -36,7 +37,7 @@ class Horno
     };
     int controlador {On_Off};
 
-    Horno(float t_m,float t_d,float t_a, Control tipo,int pin);
+    Horno(float t_m,float t_d,float t_i,float t_a, Control tipo,int pin);
 
     float salida_proporcional_porcentaje();
     float proporcional_derivativa_porcentaje();
