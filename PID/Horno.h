@@ -25,7 +25,7 @@ class Horno
     
     float e_anterior{0};
     
-    int delay_en_ms {100};
+    int delay_en_ms {500};
     
     enum Control 
     {

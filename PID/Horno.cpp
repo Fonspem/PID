@@ -31,7 +31,7 @@ float Horno::proporcional_derivativa_porcentaje()
   Kd = (100.0 * constante_derivariva) / (porcentaje_banda * t_deseada / 100.0);
   E = t_deseada - t_horno;
   
-  x = salida_proporcional_porcentaje() + ( Kd * ( (e_anterior - E) / (delay_en_ms / 1000.0) ) );
+  x = salida_proporcional_porcentaje() + ( Kd * ( (E - e_anterior) / (delay_en_ms / 1000.0) ) );
   e_anterior = E;
 
   if(x > 100){
