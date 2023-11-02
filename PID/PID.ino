@@ -33,7 +33,7 @@ void loop()
   lcd_1.print(pava.t_horno);
   
   lcd_1.setCursor(6, 1);
-  lcd_1.print(pava.calentador_PD());
+  lcd_1.print(pava.calentador_P());
 
   delay(pava.delay_en_ms);
   

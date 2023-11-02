@@ -17,11 +17,11 @@ class Horno
     bool horno_encendido {false};
     bool calentador_encendido {false};
 
-    float dt_calentar {200.0};
-    float dt_perdidas {3.0};
+    float dt_calentar {200.0};// °C por minuto
+    float dt_perdidas {30.0};// °C por minuto
     
-    float porcentaje_banda {10};//P [%]
-    float constante_derivariva {5};//D [s]
+    float porcentaje_banda {20};//P [%]
+    float constante_derivariva {2};//D [s]
     
     float e_anterior{0};
     
