@@ -15,31 +15,29 @@ float Horno::salida_proporcional_porcentaje()
 {
   float x = (t_deseada - t_horno) *100 / (t_deseada * (porcentaje_banda/100));
     
-  if(x > 100){
-    return 100;
-  }
-  if(x < 0){
-    return 0;
-  }
   return x;
 }
 
-float Horno::proporcional_derivativa_porcentaje()
+float Horno::salida_derivativa_porcentaje()
 {
   float E,Kd,x;
 
   Kd = (100.0 * constante_derivariva) / (t_deseada * (porcentaje_banda/100));
   E = t_deseada - t_horno;
   
-  x = salida_proporcional_porcentaje() + ( Kd * ( (E - e_anterior) / (delay_en_ms / 1000.0) ) );
+  x = ( Kd * ( (E - e_anterior) / (delay_en_ms / 1000.0) ) );
   e_anterior = E;
 
-  if(x > 100){
-    return 100;
-  }
-  if(x < 0){
-    return 0;
-  }
+  return x;
+}
+
+float Horno::salida_integral_porcentaje()
+{
+
+  suma_errores +=  (t_deseada - t_horno);
+  
+  float x = (constante_integral * suma_errores) / (10000.0 * t_deseada * (porcentaje_banda/100));
+
   return x;
 }
 
@@ -72,7 +70,12 @@ bool Horno::calentador_on_off(){
 float Horno::calentador_P(){
 
   float PWM = salida_proporcional_porcentaje();
-
+if(PWM > 100){
+    PWM = 100;
+  }
+  if(PWM < 0){
+    PWM = 0;
+  }
   analogWrite(pin_calentador, 255 * PWM / 100);
   // para la simulacion solamente
   t_horno += ( dt_calentar / (60000/delay_en_ms) ) * PWM / 100;
@@ -81,12 +84,62 @@ float Horno::calentador_P(){
 
 float Horno::calentador_PD(){
 
-  float PWM = proporcional_derivativa_porcentaje();
-  
+  float PWM = salida_proporcional_porcentaje() + salida_derivativa_porcentaje();
+  if(PWM > 100){
+    PWM = 100;
+  }
+  if(PWM < 0){
+    PWM = 0;
+  }
   analogWrite(pin_calentador, 255 * PWM / 100);
   // para la simulacion solamente
   t_horno += (dt_calentar / (60000 / delay_en_ms)) * PWM / 100;
   return PWM;
 }
+
+float Horno::calentador_PII(){
+
+  float PWM = salida_proporcional_porcentaje() + salida_integral_porcentaje();
+  if(PWM > 100){
+    PWM = 100;
+  }
+  if(PWM < 0){
+    PWM = 0;
+  }
+  analogWrite(pin_calentador, 255 * PWM / 100);
+  // para la simulacion solamente
+  t_horno += (dt_calentar / (60000 / delay_en_ms)) * PWM / 100;
+  return PWM;
+}
+float Horno::calentador_PID(){
+
+  float PWM = salida_proporcional_porcentaje() + salida_derivativa_porcentaje() + salida_integral_porcentaje();
+  if(PWM > 100){
+    PWM = 100;
+  }
+  if(PWM < 0){
+    PWM = 0;
+  }
+  analogWrite(pin_calentador, 255 * PWM / 100);
+  // para la simulacion solamente
+  t_horno += (dt_calentar / (60000 / delay_en_ms)) * PWM / 100;
+  return PWM;
+}
+float Horno::select_calentador(){
+  switch (controlador) {
+    case On_Off:
+      return calentador_on_off();
+    case P:
+      return calentador_P();
+    case PD:
+      return calentador_PD();
+    case PII:
+      return calentador_PII();
+    case PID:
+      return calentador_PID();
+  }
+}
+
+
 
 

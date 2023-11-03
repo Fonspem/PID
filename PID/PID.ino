@@ -11,7 +11,7 @@ int pin_calentador = 2;
 
 
 
-Horno pava(100,80,82,28,Horno::Control::PD,pin_calentador);
+Horno pava(300,200,28,28,Horno::Control::PID,pin_calentador);
 
 void setup()
 {
@@ -22,19 +22,29 @@ void setup()
   lcd_1.setCursor(0, 1);
   lcd_1.print("PWM%: ");
   pinMode(pin_calentador, OUTPUT);
-
+  Serial.begin(9600);
 }
 
 void loop()
 {
-  pava.perdidas_horno();
+  
 
   lcd_1.setCursor(6, 0);
   lcd_1.print(pava.t_horno);
-  
-  lcd_1.setCursor(6, 1);
-  lcd_1.print(pava.calentador_PD());
 
+  Serial.print(pava.t_horno);
+  Serial.print("   ");
+  Serial.print(pava.controlador);
+  Serial.print("   ");
+
+  lcd_1.setCursor(6, 1);
+  float pp = pava.select_calentador();
+  Serial.print(pp);
+  Serial.print("\n");
+  lcd_1.print(pp);
+  
+  pava.perdidas_horno();
+  
   delay(pava.delay_en_ms);
   
 }

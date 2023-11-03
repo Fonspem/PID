@@ -17,15 +17,17 @@ class Horno
     bool horno_encendido {false};
     bool calentador_encendido {false};
 
-    float dt_calentar {20.0};// °C por minuto
-    float dt_perdidas {3.0};// °C por minuto
+    float dt_calentar {200.0};// °C por minuto
+    float dt_perdidas {30.0};// °C por minuto
     
-    float porcentaje_banda {10};//P [%]
-    float constante_derivariva {10};//D [s]
+    float porcentaje_banda {10};
+    float constante_derivariva {5};//D 
+    float constante_integral {100};//I
     
-    float e_anterior{0};
-    
-    int delay_en_ms {500};
+    float e_anterior {0};
+    float suma_errores {0};
+
+    int delay_en_ms {100};
     
     enum Control 
     {
@@ -40,11 +42,15 @@ class Horno
     Horno(float t_m,float t_d,float t_i,float t_a, Control tipo,int pin);
 
     float salida_proporcional_porcentaje();
-    float proporcional_derivativa_porcentaje();
+    float salida_derivativa_porcentaje();
+    float salida_integral_porcentaje();
     void perdidas_horno();
     bool calentador_on_off();
     float calentador_P();
     float calentador_PD();
+    float calentador_PII();
+    float calentador_PID();
+    float select_calentador();
 };
 
 #endif
