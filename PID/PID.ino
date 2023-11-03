@@ -1,15 +1,10 @@
 #include <LiquidCrystal_I2C.h>
 #include "Horno.h"
-#include "Arduino.h"
-
 
 
 LiquidCrystal_I2C lcd_1(0x27,16,2);
 
-
 int pin_calentador = 3;
-
-
 
 Horno pava(300,200,28,28,Horno::Control::PID);
 
@@ -23,12 +18,15 @@ void setup()
   lcd_1.print("PWM%: ");
   pinMode(pin_calentador, OUTPUT);
   Serial.begin(9600);
+  
+  
+  pava.horno_encendido = true; //encendemos el horno
 }
 
 void loop()
 {
-  
 
+  //pabadas para que se vea bien en el lcd y el monitor serial
   lcd_1.setCursor(6, 0);
   lcd_1.print(pava.t_horno);
 
@@ -41,8 +39,8 @@ void loop()
 
   lcd_1.setCursor(6, 1);
 
-  // aqui iria la toma de temperatura del sensor
-  //  pava.lectura_termometro(valor);
+  // aqui iria la toma de temperatura del sensor cuando implementemos
+  //  pava.lectura_termometro(valor_del_termometro);
 
   float PWM = pava.select_calentador();
 
