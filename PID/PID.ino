@@ -7,11 +7,11 @@
 LiquidCrystal_I2C lcd_1(0x27,16,2);
 
 
-int pin_calentador = 2;
+int pin_calentador = 3;
 
 
 
-Horno pava(300,200,28,28,Horno::Control::PID,pin_calentador);
+Horno pava(300,200,28,28,Horno::Control::PID);
 
 void setup()
 {
@@ -34,16 +34,29 @@ void loop()
 
   Serial.print(pava.t_horno);
   Serial.print("   ");
+  Serial.print(pava.suma_errores);
+  Serial.print("   ");
   Serial.print(pava.controlador);
   Serial.print("   ");
 
   lcd_1.setCursor(6, 1);
-  float pp = pava.select_calentador();
-  Serial.print(pp);
-  Serial.print("\n");
-  lcd_1.print(pp);
+
+  // aqui iria la toma de temperatura del sensor
+  //  pava.lectura_termometro(valor);
+
+  float PWM = pava.select_calentador();
+
+  pava.ganacia_horno_simulada(PWM);// por la simulacion
   
-  pava.perdidas_horno();
+  // salida PWM
+  analogWrite(pin_calentador, 255 * PWM / 100);
+
+
+  Serial.print(PWM);
+  Serial.print("\n");
+  lcd_1.print(PWM);
+  
+  pava.perdidas_horno_simulada();// por la simulacion
   
   delay(pava.delay_en_ms);
   

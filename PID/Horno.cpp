@@ -1,15 +1,27 @@
 #include "Arduino.h" 
 #include "Horno.h"
 
-Horno::Horno(float t_m,float t_d,float t_i,float t_a, Control tipo, int pin)
+Horno::Horno(float t_m,float t_d,float t_i,float t_a, Control tipo)
 {
   t_ambiente = t_a;
   t_horno = t_i;
   t_max = t_m;
   t_deseada = t_d;
   controlador = tipo;
-  pin_calentador = pin;
 };
+void Horno::lectura_termometro(float temperatura){
+  t_horno = temperatura;
+}
+
+float Horno::salida_on_off_porcentaje(){
+  if(t_horno < t_deseada){
+    return 100;
+  }
+  else{
+    return 0 ;
+  }
+
+}
 
 float Horno::salida_proporcional_porcentaje()
 {
@@ -41,7 +53,7 @@ float Horno::salida_integral_porcentaje()
   return x;
 }
 
-void Horno::perdidas_horno(){
+void Horno::perdidas_horno_simulada(){
   if(t_horno > t_ambiente){
     t_horno -= dt_perdidas/(60000/delay_en_ms);
   }
@@ -50,94 +62,39 @@ void Horno::perdidas_horno(){
   }
 }
 
-bool Horno::calentador_on_off(){
-  if (horno_encendido){
-    if(t_horno < t_deseada){//// Ver si corresponde la implementacion
-      calentador_encendido = true;
-      digitalWrite(pin_calentador, HIGH);
-    }
-    else{
-      calentador_encendido = false;
-      digitalWrite(pin_calentador, LOW);
-    }
-  }
-  if (calentador_encendido){// para la simulacion solamente
-      t_horno += ( dt_calentar / (60000 / delay_en_ms) );
-    }
-  return calentador_encendido;
+void Horno::ganacia_horno_simulada(float pwm){
+
+  t_horno += (dt_calentar / (60000 / delay_en_ms)) * pwm / 100;
+
 }
 
-float Horno::calentador_P(){
-
-  float PWM = salida_proporcional_porcentaje();
-if(PWM > 100){
-    PWM = 100;
-  }
-  if(PWM < 0){
-    PWM = 0;
-  }
-  analogWrite(pin_calentador, 255 * PWM / 100);
-  // para la simulacion solamente
-  t_horno += ( dt_calentar / (60000/delay_en_ms) ) * PWM / 100;
-  return PWM;
-}
-
-float Horno::calentador_PD(){
-
-  float PWM = salida_proporcional_porcentaje() + salida_derivativa_porcentaje();
-  if(PWM > 100){
-    PWM = 100;
-  }
-  if(PWM < 0){
-    PWM = 0;
-  }
-  analogWrite(pin_calentador, 255 * PWM / 100);
-  // para la simulacion solamente
-  t_horno += (dt_calentar / (60000 / delay_en_ms)) * PWM / 100;
-  return PWM;
-}
-
-float Horno::calentador_PII(){
-
-  float PWM = salida_proporcional_porcentaje() + salida_integral_porcentaje();
-  if(PWM > 100){
-    PWM = 100;
-  }
-  if(PWM < 0){
-    PWM = 0;
-  }
-  analogWrite(pin_calentador, 255 * PWM / 100);
-  // para la simulacion solamente
-  t_horno += (dt_calentar / (60000 / delay_en_ms)) * PWM / 100;
-  return PWM;
-}
-float Horno::calentador_PID(){
-
-  float PWM = salida_proporcional_porcentaje() + salida_derivativa_porcentaje() + salida_integral_porcentaje();
-  if(PWM > 100){
-    PWM = 100;
-  }
-  if(PWM < 0){
-    PWM = 0;
-  }
-  analogWrite(pin_calentador, 255 * PWM / 100);
-  // para la simulacion solamente
-  t_horno += (dt_calentar / (60000 / delay_en_ms)) * PWM / 100;
-  return PWM;
-}
 float Horno::select_calentador(){
+  float PWM;
   switch (controlador) {
     case On_Off:
-      return calentador_on_off();
+      PWM = salida_on_off_porcentaje();
+      break;
     case P:
-      return calentador_P();
+      PWM = salida_proporcional_porcentaje();
+      break;
     case PD:
-      return calentador_PD();
+      PWM = salida_proporcional_porcentaje() + salida_derivativa_porcentaje();
+      break;
     case PII:
-      return calentador_PII();
+      PWM = salida_proporcional_porcentaje() + salida_integral_porcentaje();
+      break;
     case PID:
-      return calentador_PID();
+      PWM = salida_proporcional_porcentaje() + salida_derivativa_porcentaje() + salida_integral_porcentaje();
+      break;
   }
+  if(PWM > 100){
+    PWM = 100;
+  }
+  if(PWM < 0){
+    PWM = 0;
+  }
+  
+  return PWM;
 }
 
 
