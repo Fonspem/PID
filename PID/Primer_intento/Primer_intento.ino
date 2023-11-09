@@ -13,12 +13,11 @@ const int pin_led{ 6 };
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 
-
 float temperatura_actual{ 28 };
 float temperatura_set{ 100 };
 float banda_set{ 5 };
 
-int tiempo{ 0 };
+unsigned long tiempo{ 0 };
 
 Horno pava(500, temperatura_set, temperatura_actual, 28, Horno::Control::PID);
 
@@ -101,6 +100,20 @@ void pidd() {
   pava.perdidas_horno_simulada();  // por la simulacion
 }
 
+const long unsigned millis_ciclo{ 60000 };
+long unsigned millis_pwm{ 0 };
+
+bool PWM_set(float porcentaje) {
+  bool salida{ false };
+  if (millis() - millis_pwm < millis_ciclo) {
+    if (((millis() - millis_pwm) / millis()) * 100 <= porcentaje) {
+      salida = true;
+    }
+  } else {
+    millis_pwm = millis();
+  }
+  return salida;
+}
 
 void loop() {
 
@@ -112,7 +125,6 @@ void loop() {
       set = subir = bajar = false;
     }
     tiempo += 10;
-    delay(10);
     return;
   }
   if (digitalRead(pin_select)) {
@@ -138,13 +150,13 @@ void loop() {
 
   pava.t_deseada = temperatura_set;
   pava.porcentaje_banda = banda_set;
-  if (tiempo >= pava.delay_en_ms) {
-    tiempo = 0;
+
+  if (millis() - tiempo >= pava.delay_en_ms) {
+    tiempo = millis();
     pidd();
   }
 
-  actualizar_display();
-  tiempo += 10;
+  digitalWrite(pin_led, PWM_set(pava.select_calentador()));
 
-  delay(10);
+  actualizar_display();
 }

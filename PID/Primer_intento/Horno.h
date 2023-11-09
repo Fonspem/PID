@@ -26,7 +26,7 @@ class Horno
     float suma_errores {0};
     
     //regula la velocidad de medicion
-    int delay_en_ms {500};
+    int delay_en_ms {100};
     
 
     // enum para hacer mas entendible el switch

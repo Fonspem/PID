@@ -39,8 +39,16 @@ void loop()
 
   lcd_1.setCursor(6, 1);
 
+<<<<<<< Updated upstream
   // aqui iria la toma de temperatura del sensor cuando implementemos
   //  pava.lectura_termometro(valor_del_termometro);
+=======
+  
+  
+  pava.lectura_termometro(sensor.getTempCByIndex(0));
+  Serial.print(sensor.getTempCByIndex(0));
+  Serial.print("°C   ");
+>>>>>>> Stashed changes
 
   float PWM = pava.select_calentador();
 
