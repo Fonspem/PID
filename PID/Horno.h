@@ -10,10 +10,10 @@ class Horno
     float t_deseada {200};
 
     bool horno_encendido {false};                          // no te olvides de encender el horno
-
+    bool resistencia_encendida {false};
     // para la simulacion
-    float dt_calentar {20.0};// °C por minuto
-    float dt_perdidas {3.0};// °C por minuto
+    float dt_calentar {30.0};// °C por minuto
+    float dt_perdidas {10.0};// °C por minuto
     
 
     // constantes P I D
@@ -26,7 +26,7 @@ class Horno
     float suma_errores {0};
     
     //regula la velocidad de medicion
-    int delay_en_ms {500};
+    int delay_en_ms {1000};
     
 
     // enum para hacer mas entendible el switch
@@ -57,10 +57,7 @@ class Horno
 
     float select_calentador();
 
-    // solo para las simulaciones
-    void perdidas_horno_simulada();
-    void ganacia_horno_simulada(float pwm);
-
+    
 };
 
 #endif
