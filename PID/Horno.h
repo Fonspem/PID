@@ -24,9 +24,10 @@ class Horno
     // escenciales para integal y derivada
     float e_anterior {0};
     float suma_errores {0};
+    float pendiente_temperatura{0};
     
     //regula la velocidad de medicion
-    int delay_en_ms {1000};
+    int delay_en_ms {5000};
     
 
     // enum para hacer mas entendible el switch

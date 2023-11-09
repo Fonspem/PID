@@ -35,7 +35,9 @@ float Horno::salida_derivativa_porcentaje()
   Kd = (100.0 * constante_derivariva) / (t_deseada * (porcentaje_banda/100.0));
   E = t_deseada - t_horno;
   
-  x = ( Kd * ( (E - e_anterior) / (delay_en_ms / 1000.0) ) );
+  pendiente_temperatura = ( (E - e_anterior) / (delay_en_ms / 1000.0) );
+  
+  x = ( Kd *  pendiente_temperatura);
   e_anterior = E;
 
   return x;

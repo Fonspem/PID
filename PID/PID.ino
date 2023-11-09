@@ -13,9 +13,9 @@ const int pin_led{ 6 };
 //LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-float temperatura_actual{ 28 };
+float temperatura_actual{ 190 };
 float temperatura_set{ 200 };
-float banda_set{ 5 };
+float banda_set{ 15 };
 
 Horno pava(500, temperatura_set, temperatura_actual, 28, Horno::Control::PID);
 
@@ -82,11 +82,11 @@ bool subir{ false };
 bool bajar{ false };
 bool on_off{ false };
 
-const long unsigned millis_ciclo{ 6000 };
+const long unsigned millis_ciclo{ 500 };
 long unsigned millis_pwm{ 0 };
 
-float pwm_porcentaje{ 100 };
-float pwm_porcentaje_set{ 100 };
+float pwm_porcentaje{ 0 };
+float pwm_porcentaje_set{ 0 };
 
 bool PWM_set() {
   if ((millis() - millis_pwm) >= millis_ciclo) {
