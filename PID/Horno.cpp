@@ -50,7 +50,6 @@ float Horno::salida_integral_porcentaje()
   return x;
 }
 
-
 float Horno::select_calentador(){
   float PWM {0};
   if(horno_encendido){

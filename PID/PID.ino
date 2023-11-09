@@ -1,6 +1,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <LiquidCrystal.h>
 #include "Horno.h"
+
 const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
 
 const int pin_select{ 10 };
@@ -12,18 +13,15 @@ const int pin_led{ 6 };
 //LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-
 float temperatura_actual{ 28 };
 float temperatura_set{ 200 };
 float banda_set{ 5 };
-
-
 
 Horno pava(500, temperatura_set, temperatura_actual, 28, Horno::Control::PID);
 
 void setup() {
 
-  //lcd.begin(16, 2);
+  lcd.begin(16, 2);
   lcd.init();
   lcd.setBacklight(1);
 
@@ -43,17 +41,16 @@ void cambiar_display() {
 
     tempset = false;
     lcd.setCursor(0, 0);
-    //lcd.print("                ");
+    
     lcd.setCursor(0, 0);
     lcd.print("Banda.Set: ");
     lcd.print(banda_set);
-
 
   } else {
 
     tempset = true;
     lcd.setCursor(0, 0);
-    //lcd.print("                ");
+    
     lcd.setCursor(0, 0);
     lcd.print("Temp.Set: ");
     lcd.print(temperatura_set);
@@ -66,32 +63,24 @@ void actualizar_display() {
   if (!tempset) {
 
     lcd.setCursor(0, 0);
-    //lcd.print("                ");
+    
     lcd.setCursor(0, 0);
     lcd.print("Banda.Set: ");
     lcd.print(banda_set);
 
   } else {
     lcd.setCursor(0, 0);
-    //lcd.print("                ");
+    
     lcd.setCursor(0, 0);
     lcd.print("Temp.Set: ");
     lcd.print(temperatura_set);
   }
 }
 
-
 bool set{ false };
 bool subir{ false };
 bool bajar{ false };
 bool on_off{ false };
-
-float pidd() {
-
-  pava.lectura_termometro(temperatura_actual);
-
-  return pava.select_calentador();
-}
 
 const long unsigned millis_ciclo{ 6000 };
 long unsigned millis_pwm{ 0 };
@@ -161,7 +150,10 @@ void loop() {
 
   if (millis() - tiempo >= pava.delay_en_ms) {
     tiempo = millis();
-    pwm_porcentaje = pidd();
+
+    pava.lectura_termometro(temperatura_actual);
+
+    pwm_porcentaje =  pava.select_calentador();
   }
 
   actualizar_display();

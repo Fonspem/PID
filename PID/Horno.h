@@ -55,9 +55,7 @@ class Horno
 
     void lectura_termometro(float temperatura);// permite guardar la lectura de un termometro
 
-    float select_calentador();
-
-    
+    float select_calentador(); 
 };
 
 #endif
