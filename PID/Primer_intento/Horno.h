@@ -13,7 +13,7 @@ class Horno
     bool resistencia_encendida {false};
     // para la simulacion
     float dt_calentar {30.0};// °C por minuto
-    float dt_perdidas {3.0};// °C por minuto
+    float dt_perdidas {10.0};// °C por minuto
     
 
     // constantes P I D
@@ -26,7 +26,7 @@ class Horno
     float suma_errores {0};
     
     //regula la velocidad de medicion
-    int delay_en_ms {100};
+    int delay_en_ms {1000};
     
 
     // enum para hacer mas entendible el switch

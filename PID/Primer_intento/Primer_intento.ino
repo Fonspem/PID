@@ -14,8 +14,8 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 
 float temperatura_actual{ 28 };
-float temperatura_set{ 100 };
-float banda_set{ 5 };
+float temperatura_set{ 50 };
+float banda_set{ 15 };
 
 
 
@@ -37,7 +37,7 @@ bool tempset{ true };
 
 void cambiar_display() {
   lcd.setCursor(0, 1);
-  lcd.print("Temp.Actual:");
+  lcd.print("T.Actual:");
   lcd.print(temperatura_actual);
   if (tempset) {
 
@@ -61,7 +61,7 @@ void cambiar_display() {
 }
 void actualizar_display() {
   lcd.setCursor(0, 1);
-  lcd.print("Temp.Actual:");
+  lcd.print("T.Actual:");
   lcd.print(temperatura_actual);
   if (!tempset) {
 
@@ -93,26 +93,28 @@ float pidd() {
   return pava.select_calentador();
 }
 
-const long unsigned millis_ciclo{ 60000 };
+const long unsigned millis_ciclo{ 6000 };
 long unsigned millis_pwm{ 0 };
 
 float pwm_porcentaje{ 100 };
+float pwm_porcentaje_set{ 100 };
 
-bool PWM_set(float porcentaje) {
-  bool salida{ false };
-  if (millis() - millis_pwm < millis_ciclo) {
-    if (((millis() - millis_pwm) / float(millis())) * 100.0 <= porcentaje) {
-      salida = true;
-    }
-  } else {
+bool PWM_set() {
+  if ((millis() - millis_pwm) >= millis_ciclo) {
     millis_pwm = millis();
+    pwm_porcentaje_set = pwm_porcentaje;
   }
-  return salida;
+  if ((float(millis() - millis_pwm) / float(millis_ciclo)) * 100.0 <= pwm_porcentaje_set and pwm_porcentaje_set != 0) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 unsigned long tiempo{ 0 };
 
 void loop() {
+  delay(1);
 
   if (set or subir or bajar or on_off) {
     if (digitalRead(pin_select) == LOW
@@ -147,14 +149,14 @@ void loop() {
   pava.t_deseada = temperatura_set;
   pava.porcentaje_banda = banda_set;
 
-  if (PWM_set(pwm_porcentaje)) {
+  if (PWM_set()) {
     digitalWrite(pin_led, HIGH);
     digitalWrite(LED_BUILTIN, HIGH);
-    temperatura_actual += (pava.dt_calentar/60000)*(millis() - tiempo);
+    temperatura_actual += (pava.dt_calentar / 60000) * (millis() - tiempo);
   } else {
     digitalWrite(pin_led, LOW);
     digitalWrite(LED_BUILTIN, LOW);
-    temperatura_actual -= (pava.dt_perdidas/60000)*(millis() - tiempo);
+    temperatura_actual -= (pava.dt_perdidas / 60000) * (millis() - tiempo);
   }
 
   if (millis() - tiempo >= pava.delay_en_ms) {
