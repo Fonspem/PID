@@ -13,7 +13,7 @@ class Horno
     bool resistencia_encendida {false};
     // para la simulacion
     float dt_calentar {30.0};// °C por minuto
-    float dt_perdidas {10.0};// °C por minuto
+    float dt_perdidas {3.0};// °C por minuto
     
 
     // constantes P I D
