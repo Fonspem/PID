@@ -14,8 +14,8 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 
 float temperatura_actual{ 28 };
-float temperatura_set{ 50 };
-float banda_set{ 15 };
+float temperatura_set{ 200 };
+float banda_set{ 5 };
 
 
 
