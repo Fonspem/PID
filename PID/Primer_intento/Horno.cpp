@@ -14,16 +14,16 @@ void Horno::lectura_termometro(float temperatura){
 
 float Horno::salida_on_off_porcentaje(){
   if(t_horno < t_deseada){
-    return 100;
+    return 100.0;
   }
   else{
-    return 0 ;
+    return 0.0 ;
   }
 }
 
 float Horno::salida_proporcional_porcentaje()
 {
-  float x = (t_deseada - t_horno) *100 / (t_deseada * (porcentaje_banda/100));
+  float x = (t_deseada - t_horno) *100.0 / (t_deseada * (porcentaje_banda/100.0));
     
   return x;
 }
@@ -32,7 +32,7 @@ float Horno::salida_derivativa_porcentaje()
 {
   float E,Kd,x;
 
-  Kd = (100.0 * constante_derivariva) / (t_deseada * (porcentaje_banda/100));
+  Kd = (100.0 * constante_derivariva) / (t_deseada * (porcentaje_banda/100.0));
   E = t_deseada - t_horno;
   
   x = ( Kd * ( (E - e_anterior) / (delay_en_ms / 1000.0) ) );
@@ -50,20 +50,6 @@ float Horno::salida_integral_porcentaje()
   return x;
 }
 
-void Horno::perdidas_horno_simulada(){
-  if(t_horno > t_ambiente){
-    t_horno -= dt_perdidas/(60000/delay_en_ms);
-  }
-  else if(t_horno < t_ambiente){
-    t_horno = t_ambiente;
-  }
-}
-
-void Horno::ganacia_horno_simulada(float pwm){
-
-  t_horno += (dt_calentar / (60000 / delay_en_ms)) * pwm / 100;
-
-}
 
 float Horno::select_calentador(){
   float PWM {0};

@@ -17,7 +17,7 @@ float temperatura_actual{ 28 };
 float temperatura_set{ 100 };
 float banda_set{ 5 };
 
-unsigned long tiempo{ 0 };
+
 
 Horno pava(500, temperatura_set, temperatura_actual, 28, Horno::Control::PID);
 
@@ -30,6 +30,7 @@ void setup() {
   pava.horno_encendido = true;
 
   pava.delay_en_ms = 100;
+  pinMode(LED_BUILTIN, OUTPUT);
 }
 
 bool tempset{ true };
@@ -85,28 +86,22 @@ bool subir{ false };
 bool bajar{ false };
 bool on_off{ false };
 
-void pidd() {
+float pidd() {
 
   pava.lectura_termometro(temperatura_actual);
 
-  float PWM = pava.select_calentador();
-
-  pava.ganacia_horno_simulada(PWM);  // por la simulacion
-
-  temperatura_actual = pava.t_horno;
-
-  analogWrite(pin_led, 255 * PWM / 100);
-
-  pava.perdidas_horno_simulada();  // por la simulacion
+  return pava.select_calentador();
 }
 
 const long unsigned millis_ciclo{ 60000 };
 long unsigned millis_pwm{ 0 };
 
+float pwm_porcentaje{ 100 };
+
 bool PWM_set(float porcentaje) {
   bool salida{ false };
   if (millis() - millis_pwm < millis_ciclo) {
-    if (((millis() - millis_pwm) / millis()) * 100 <= porcentaje) {
+    if (((millis() - millis_pwm) / float(millis())) * 100.0 <= porcentaje) {
       salida = true;
     }
   } else {
@@ -114,6 +109,8 @@ bool PWM_set(float porcentaje) {
   }
   return salida;
 }
+
+unsigned long tiempo{ 0 };
 
 void loop() {
 
@@ -124,7 +121,6 @@ void loop() {
         and digitalRead(pin_on_off) == LOW) {
       set = subir = bajar = false;
     }
-    tiempo += 10;
     return;
   }
   if (digitalRead(pin_select)) {
@@ -151,12 +147,20 @@ void loop() {
   pava.t_deseada = temperatura_set;
   pava.porcentaje_banda = banda_set;
 
-  if (millis() - tiempo >= pava.delay_en_ms) {
-    tiempo = millis();
-    pidd();
+  if (PWM_set(pwm_porcentaje)) {
+    digitalWrite(pin_led, HIGH);
+    digitalWrite(LED_BUILTIN, HIGH);
+    temperatura_actual += (pava.dt_calentar/60000)*(millis() - tiempo);
+  } else {
+    digitalWrite(pin_led, LOW);
+    digitalWrite(LED_BUILTIN, LOW);
+    temperatura_actual -= (pava.dt_perdidas/60000)*(millis() - tiempo);
   }
 
-  digitalWrite(pin_led, PWM_set(pava.select_calentador()));
+  if (millis() - tiempo >= pava.delay_en_ms) {
+    tiempo = millis();
+    pwm_porcentaje = pidd();
+  }
 
   actualizar_display();
 }
