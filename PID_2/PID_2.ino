@@ -1,5 +1,4 @@
-#include <LiquidCrystal_I2C.h>
-//#include <LiquidCrystal.h>
+#include <LiquidCrystal.h>
 class Horno {
 public:
   float t_ambiente{ 28 };
@@ -83,10 +82,8 @@ public:
 const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
 
 
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
-//LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
-
-LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 float temperatura_actual{ 28 };
 float temperatura_set{ 200 };
@@ -105,13 +102,8 @@ const int pin_led{ 6 };
 
 void setup() {
 
-  Serial.begin(9600);
+  lcd.begin(16, 2);
 
-  //lcd.begin(16, 2);
-
-
-  lcd.init();
-  lcd.setBacklight(1);
 
   pinMode(rs, OUTPUT);
   pinMode(en, OUTPUT);
