@@ -251,7 +251,6 @@ void loop() {
       on_off = true;
       if (horno_encendido) {
         horno_encendido = false;
-
       } else {
         horno_encendido = true;
       }
